@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'activity.dart';
 
-class CalendarView extends StatelessWidget{
+class CalendarView extends StatelessWidget {
   const CalendarView({super.key});
   @override
   Widget build(BuildContext context) {
-    return  Scaffold (
-       body: const Center(
-       child: const CalendarPage(title: 'Reflection Section'),
-     )
+    return Scaffold(
+      body: const Center(
+      child: const CalendarPage(title: 'Reflection Section'),
+     ),
     );
   }
 }
