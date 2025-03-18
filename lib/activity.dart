@@ -56,10 +56,16 @@ class _ActivityPage extends State<ActivityPage> {
     "The only person you should compare yourself to is yourself. Aim to be a tiny bit better than who you were yesterday.",
     "Nothing is perfect, yet everything is perfect. Trees can be contorted or bent and they're still beautiful",
   ];
-  String example = "The only person you should compare yourself to is yourself. Aim to be a tiny bit better than who you were yesterday.";
+  //String example = "The only person you should compare yourself to is yourself. Aim to be a tiny bit better than who you were yesterday.";
+  DateTime todayDate = DateTime.now();
 
   void navigateBreath() {
     print("breathing button pressed");
+  }
+
+  int get todaysQuoteNum {
+    int day = todayDate.difference(DateTime(DateTime.now().year, 1, 1)).inDays;
+    return day % quotes.length;
   }
 
   @override
@@ -112,7 +118,7 @@ class _ActivityPage extends State<ActivityPage> {
               child: Padding( padding: const EdgeInsets.all(30.0),
                 child: Align(
                   child: Text(
-                    example,
+                    quotes[todaysQuoteNum],
                     style: widget.theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
