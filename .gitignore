@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Pages changed due to using local storage issues with Android Studio
+/android/settings.gradle
+/android/gradle/wrapper/gradle-wrapper.properties
+/android/app/build.gradle
