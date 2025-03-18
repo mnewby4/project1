@@ -1,34 +1,18 @@
 import 'package:flutter/material.dart';
+import 'breathe.dart';
+import 'theme.dart';
 import 'dart:math';
 
 class ActivityView extends StatelessWidget{
-  const ActivityView({super.key});
+  const ActivityView({super.key, required this.quote});
+  final String quote; 
   @override
   Widget build(BuildContext context) {
     return Scaffold (
        body: Center(
        child: ActivityPage(
         title: 'Relaxation Station',
-        theme: ThemeData(
-          textTheme: TextTheme(
-            titleLarge: const TextStyle(
-              color: Colors.white,
-              fontSize: 25,
-            ),
-            titleSmall: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-            ),
-            titleMedium: const TextStyle(
-              color: Colors.black,
-              fontSize: 23,
-            ),
-            bodyMedium: const TextStyle(
-              color: Colors.black,
-              fontSize: 21,
-            ),
-          ),
-         ), 
+        quote: quote,
         ),
       ),
     );
@@ -36,36 +20,16 @@ class ActivityView extends StatelessWidget{
 }
 
 class ActivityPage extends StatefulWidget {
-  const ActivityPage({super.key, required this.title, required this.theme});
+  const ActivityPage({super.key, required this.title, required this.quote});
   final String title;
-  final ThemeData theme;
+  final String quote;
   @override
   State<ActivityPage> createState() => _ActivityPage();
 }
 
 class _ActivityPage extends State<ActivityPage> {
-  List<String> quotes = [
-    "No flower can grow without a little rain. Let go of control over what you cannot change.",
-    "Grow towards your interests, like a plant reaching for the sun.",
-    "You deserve the same kindness you give to others, so extend that kindness to yourself.",
-    "How you've survived hardships before will help you survive it again in the present.",
-    "Embrace the present moment and allow things to unfold at their own pace.",
-    "Trust that everything will happen in the right timing for you at your own pace.",
-    "Nature does not hurry yet everything is accomplished.",
-    "Release negative thoughts about yourself that limit you from being who you truly are.",
-    "The only person you should compare yourself to is yourself. Aim to be a tiny bit better than who you were yesterday.",
-    "Nothing is perfect, yet everything is perfect. Trees can be contorted or bent and they're still beautiful",
-  ];
-  //String example = "The only person you should compare yourself to is yourself. Aim to be a tiny bit better than who you were yesterday.";
-  DateTime todayDate = DateTime.now();
-
   void navigateBreath() {
     print("breathing button pressed");
-  }
-
-  int get todaysQuoteNum {
-    int day = todayDate.difference(DateTime(DateTime.now().year, 1, 1)).inDays;
-    return day % quotes.length;
   }
 
   @override
@@ -75,7 +39,7 @@ class _ActivityPage extends State<ActivityPage> {
         backgroundColor: const Color.fromRGBO(84, 190, 123, 1),
         title: Text(
           widget.title,
-          style: widget.theme.textTheme.titleLarge,
+          style: AppTheme.theme.textTheme.titleLarge,
           textAlign: TextAlign.center,
         ),
         centerTitle: true,
@@ -95,7 +59,7 @@ class _ActivityPage extends State<ActivityPage> {
               child: Align(
                 child: Text(
                   "Just a reminder that...",
-                  style: widget.theme.textTheme.titleSmall,
+                  style: AppTheme.theme.textTheme.titleSmall,
                 ),
               ),
             ),
@@ -118,8 +82,8 @@ class _ActivityPage extends State<ActivityPage> {
               child: Padding( padding: const EdgeInsets.all(30.0),
                 child: Align(
                   child: Text(
-                    quotes[todaysQuoteNum],
-                    style: widget.theme.textTheme.bodyMedium,
+                    widget.quote,
+                    style: AppTheme.theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -137,7 +101,7 @@ class _ActivityPage extends State<ActivityPage> {
               child: Align(
                 child: Text(
                   "Activities",
-                  style: widget.theme.textTheme.titleSmall,
+                  style: AppTheme.theme.textTheme.titleSmall,
                 ),
               ),
             ),
@@ -148,14 +112,16 @@ class _ActivityPage extends State<ActivityPage> {
               height: 150,
               width: 380,
               child: ElevatedButton(
-                onPressed: navigateBreath,
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const BreathePage()),);
+                },
                 style: 
-                ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll<Color>(Color.fromRGBO(173, 249, 223, 1)),
-                ),
+                  ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll<Color>(Color.fromRGBO(173, 249, 223, 1)),
+                  ),
                 child: Text(
                   "Breathing Exercise", 
-                  style: widget.theme.textTheme.titleMedium
+                  style: AppTheme.theme.textTheme.titleMedium
                 ),
               ),
             ),
@@ -172,7 +138,7 @@ class _ActivityPage extends State<ActivityPage> {
                 ),
                 child: Text(
                   "Guided Meditation", 
-                  style: widget.theme.textTheme.titleMedium
+                  style: AppTheme.theme.textTheme.titleMedium
                 ),
               ),
             ),            
