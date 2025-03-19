@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'breathe.dart';
+import 'meditate.dart';
 import 'theme.dart';
 
 class ActivityView extends StatelessWidget{
@@ -131,7 +132,9 @@ class _ActivityPage extends State<ActivityPage> {
               height: 150,
               width: 380,
               child: ElevatedButton(
-                onPressed: navigateBreath,
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MeditatePage()));
+                },
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll<Color>(Color.fromRGBO(135, 202, 229, 1)),
                 ),
