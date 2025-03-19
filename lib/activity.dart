@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'breathe.dart';
 import 'theme.dart';
-import 'dart:math';
 
 class ActivityView extends StatelessWidget{
   const ActivityView({super.key, required this.quote});

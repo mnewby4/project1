@@ -1,6 +1,78 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
 
+class _HeartAnimation extends StatefulWidget {
+  const _HeartAnimation();
+
+  @override
+  State<_HeartAnimation> createState() => _HeartAnimationState();
+}
+
+/* Returns the Heart Animation */
+class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProviderStateMixin {
+  late AnimationController motionController;
+  late Animation motionAnimation;
+  double size = 20;
+  void initState(){
+    super.initState();
+    motionController = AnimationController(
+      duration: Duration(seconds: 4),
+      reverseDuration: Duration(seconds: 8), 
+      vsync: this, 
+      lowerBound: 0.5
+    );
+
+    motionAnimation = CurvedAnimation(
+      parent: motionController, 
+      curve: Curves.ease
+    );
+  
+    motionController.forward();
+    motionController.addStatusListener((status){
+      setState(() {
+        if(status == AnimationStatus.completed){
+          Future.delayed(const Duration(seconds:7), () {
+            motionController.reverse();
+          });
+        } 
+        else if (status == AnimationStatus.dismissed){
+          motionController.forward();
+        }
+      });
+    });
+
+    motionController.addListener((){
+      setState(() {
+        size = motionController.value * 250;
+      });
+    });
+  }
+  
+  @override
+  void dispose(){
+    motionController.dispose();
+    super.dispose();
+  }  
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          child: Stack(children: <Widget>[
+            Center(
+              child: new Container(
+                child: Image.asset('assets/images/heart_pump.png'),
+                height: size,
+              ),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
 class BreathePage extends StatelessWidget {
   const BreathePage({super.key});
 
@@ -40,14 +112,16 @@ class BreathePage extends StatelessWidget {
             /* Heart Animation */
             Container(
               height: 400,
-              child: Image.asset("assets/images/heart_pump.png"),
+              child: _HeartAnimation(),
             ),
             SizedBox(height: 20),
 
             /* Instructions Box */
-            Container(
+            AnimatedContainer(
               height: 200, 
               width: 380, 
+              curve: Curves.easeInOut, 
+              duration: Duration(seconds: 4),
               decoration: BoxDecoration(
                 color: const Color.fromRGBO(159, 236, 149, 1),
                 boxShadow: [
@@ -68,7 +142,6 @@ class BreathePage extends StatelessWidget {
                 ),
               ),
             ),
-
           ],
         ),
       ),
