@@ -1,3 +1,4 @@
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'theme.dart';
 
@@ -13,8 +14,12 @@ class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProvi
   late AnimationController motionController;
   late Animation motionAnimation;
   double size = 20;
-  void initState(){
+  void initState() {
     super.initState();
+
+    FlameAudio.bgm.initialize();
+    FlameAudio.bgm.play("backgroundaudio.mp3", volume: 1.0);
+
     motionController = AnimationController(
       duration: Duration(seconds: 4),
       reverseDuration: Duration(seconds: 8), 
@@ -49,7 +54,8 @@ class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProvi
   }
   
   @override
-  void dispose(){
+  void dispose() {
+    FlameAudio.bgm.stop();
     motionController.dispose();
     super.dispose();
   }  
@@ -58,7 +64,7 @@ class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProvi
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
+        child: Container (
           child: Stack(children: <Widget>[
             Center(
               child: new Container(
@@ -73,6 +79,35 @@ class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProvi
   }
 }
 
+class _MuteButton extends StatefulWidget {
+  const _MuteButton({super.key});
+  @override 
+  State<_MuteButton> createState() => _MuteButtonState();
+}
+
+class _MuteButtonState extends State<_MuteButton> {
+  bool isSongMuted = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      iconSize: 50.0,
+      onPressed: () {
+        setState(() {
+          if (isSongMuted == true) {
+            FlameAudio.bgm.play("backgroundaudio.mp3", volume: 1.0);
+          } else {
+            FlameAudio.bgm.stop();
+          }
+          isSongMuted = !isSongMuted;
+        });
+      }, 
+      icon: isSongMuted 
+          ? const Icon(Icons.music_off_rounded)
+          : const Icon(Icons.music_note_rounded),
+    );
+  }
+}
 class BreathePage extends StatelessWidget {
   const BreathePage({super.key});
 
@@ -92,7 +127,7 @@ class BreathePage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             SizedBox(height: 25),
-            
+
             /* Heart Message */
             Container(
               height: 40, 
@@ -107,7 +142,17 @@ class BreathePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 60),
+            SizedBox(height: 15),
+
+            /* Mute Button */
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  child: _MuteButton(),
+                ),
+              ],
+            ),
 
             /* Heart Animation */
             Container(
