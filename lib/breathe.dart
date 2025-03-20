@@ -1,6 +1,8 @@
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'theme.dart';
+import 'package:just_audio/just_audio.dart';
+
+final AudioPlayer audioPlayer = AudioPlayer()..setAsset("assets/audio/backgroundaudio.mp3");
 
 class _HeartAnimation extends StatefulWidget {
   const _HeartAnimation();
@@ -14,11 +16,14 @@ class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProvi
   late AnimationController motionController;
   late Animation motionAnimation;
   double size = 20;
+
+  @override
   void initState() {
     super.initState();
 
-    FlameAudio.bgm.initialize();
-    FlameAudio.bgm.play("backgroundaudio.mp3", volume: 1.0);
+    /*FlameAudio.bgm.initialize();
+    FlameAudio.bgm.play("backgroundaudio.mp3", volume: 1.0);*/
+    audioPlayer.play();
 
     motionController = AnimationController(
       duration: Duration(seconds: 4),
@@ -55,7 +60,8 @@ class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProvi
   
   @override
   void dispose() {
-    FlameAudio.bgm.stop();
+    //FlameAudio.bgm.stop();
+    audioPlayer.dispose();
     motionController.dispose();
     super.dispose();
   }  
@@ -95,9 +101,11 @@ class _MuteButtonState extends State<_MuteButton> {
       onPressed: () {
         setState(() {
           if (isSongMuted == true) {
-            FlameAudio.bgm.play("backgroundaudio.mp3", volume: 1.0);
+            //FlameAudio.bgm.play("backgroundaudio.mp3", volume: 1.0);
+            audioPlayer.play();
           } else {
-            FlameAudio.bgm.stop();
+            //FlameAudio.bgm.stop();
+            audioPlayer.setVolume(0.0);
           }
           isSongMuted = !isSongMuted;
         });
