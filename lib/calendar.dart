@@ -11,8 +11,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  // Map<DateTime, MoodEntry> moodEntries;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
