@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'table_calendar.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class CalendarView extends StatelessWidget {
   const CalendarView({Key? key}) : super(key: key);
@@ -126,7 +126,8 @@ class _CalendarPageState extends State<CalendarPage> {
         const SizedBox(height: 20),
         Text(
           'Mood History (Coming Soon)',
-          style: Theme.of(context).textTheme.subtitle1,
+          style: Theme.of(context).textTheme.titleMedium,
+
         ),
       ],
     );
