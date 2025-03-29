@@ -1,135 +1,120 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarView extends StatelessWidget {
+class CalendarView extends StatefulWidget {
   const CalendarView({Key? key}) : super(key: key);
+
+  @override
+  _CalendarViewState createState() => _CalendarViewState();
+}
+
+class _CalendarViewState extends State<CalendarView> {
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[50],
-
       appBar: AppBar(
-        title: const Text('Reflection Section'),
-        backgroundColor: Colors.green,
+        title: const Text('Mood Tracker Calendar'),
       ),
-
-      // Main content is the CalendarPage
-      body: const CalendarPage(),
-
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.green,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.sentiment_satisfied_alt),
-              color: Colors.white,
-              onPressed: () {
-                // Handle mood tracking or navigate to mood screen
-              },
+      body: Column(
+        children: [
+          // Header text matching the proposal outline
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              "Select a date to view or add your mood entry",
+              style: TextStyle(fontSize: 16),
             ),
-            IconButton(
-              icon: const Icon(Icons.favorite),
-              color: Colors.white,
-              onPressed: () {
-                // Handle favorites or navigate to a different screen
+          ),
+          Expanded(
+            child: TableCalendar(
+              firstDay: DateTime.utc(2020, 1, 1),
+              lastDay: DateTime.utc(2030, 12, 31),
+              focusedDay: _focusedDay,
+              calendarFormat: _calendarFormat,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+                // When a day is selected, show a placeholder dialog for mood details.
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                          "Mood Entry for ${selectedDay.toLocal().toString().split(' ')[0]}"),
+                      content: const Text(
+                          "Mood and journal entry details would appear here."),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Close"),
+                        )
+                      ],
+                    );
+                  },
+                );
               },
+              onFormatChanged: (format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              },
+              // Marker to show mood entry for days (using a simple dummy example)
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, day, events) {
+                  // For demonstration, we mark today with a dot.
+                  if (isSameDay(day, DateTime.now())) {
+                    return Positioned(
+                      bottom: 1,
+                      child: Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
             ),
-          ],
-        ),
+          ),
+          // Button to add today's mood entry as described in the proposal.
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                // Placeholder for adding today's entry.
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("Add Today's Entry"),
+                      content: const Text(
+                          "A form to add your mood and journal entry would appear here."),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Close"),
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+              child: const Text("Add Today’s Entry"),
+            ),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class CalendarPage extends StatefulWidget {
-  const CalendarPage({Key? key}) : super(key: key);
-
-  @override
-  State<CalendarPage> createState() => _CalendarPageState();
-}
-
-class _CalendarPageState extends State<CalendarPage> {
-  late DateTime _focusedDay;
-
-  // The current day
-  late DateTime _selectedDay;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusedDay = DateTime.now();
-    _selectedDay = DateTime.now();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // TableCalendar widget
-        TableCalendar(
-          // Define the range of your calendar
-          firstDay: DateTime.utc(2020, 1, 1),
-          lastDay: DateTime.utc(2030, 12, 31),
-          focusedDay: _focusedDay,
-
-          // Highlight which day is selected
-          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-
-          //user taps a day
-          onDaySelected: (selectedDay, focusedDay) {
-            setState(() {
-              _selectedDay = selectedDay;
-              _focusedDay = focusedDay;
-            });
-          },
-
-          calendarStyle: CalendarStyle(
-            // Highlight the selected day
-            selectedDecoration: BoxDecoration(
-              color: Colors.green,
-              shape: BoxShape.circle,
-            ),
-            // Highlight today's date
-            todayDecoration: BoxDecoration(
-              color: Colors.orangeAccent,
-              shape: BoxShape.circle,
-            ),
-            // Adjust text styles, spacing, etc. as desired
-          ),
-
-          headerStyle: const HeaderStyle(
-            // Center the month/year title
-            titleCentered: true,
-            formatButtonVisible: false,
-          ),
-        ),
-
-        const SizedBox(height: 20),
-
-        // "Add Today's Entry" button
-        ElevatedButton(
-          onPressed: () {
-            // Navigate to your "Daily View" or open a modal
-            // to record mood & journal entry
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-          ),
-          child: const Text(
-            "Add Today's Entry",
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-
-        const SizedBox(height: 20),
-        Text(
-          'Mood History (Coming Soon)',
-          style: Theme.of(context).textTheme.titleMedium,
-
-        ),
-      ],
     );
   }
 }
