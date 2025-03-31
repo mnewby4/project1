@@ -28,9 +28,6 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPage extends State<ActivityPage> {
-  void navigateBreath() {
-    print("breathing button pressed");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +67,7 @@ class _ActivityPage extends State<ActivityPage> {
               height: 200, 
               width: 380, 
               decoration: BoxDecoration(
-                color: const Color.fromRGBO(255, 241, 205, 1),
+                color: const Color.fromRGBO(255, 233, 205, 1),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey, 
