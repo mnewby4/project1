@@ -3,77 +3,81 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
-  static const _databaseName = "MyDatabase.db";
+  static const _databaseName = "MoodTracker.db";
   static const _databaseVersion = 1;
-  static const table = 'my_table';
+
+  static const table = 'mood_entries';
   static const columnId = '_id';
-  static const columnName = 'name';
-  static const columnAge = 'age';
-  late Database _db;
-// this opens the database (and creates it if it doesn't exist)
-  Future<void> init() async {
+  static const columnDate = 'date'; // ISO string, e.g., "2025-03-31"
+  static const columnMood = 'mood'; // Integer 0–4 (sad to happy)
+  static const columnJournal = 'journal'; // Optional text
+
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  static Database? _database;
+
+  DatabaseHelper._privateConstructor();
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
+
+  Future<Database> _initDatabase() async {
     final documentsDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentsDirectory.path, _databaseName);
-    _db = await openDatabase(
+    return await openDatabase(
       path,
       version: _databaseVersion,
       onCreate: _onCreate,
     );
   }
 
-// SQL code to create the database table
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-CREATE TABLE $table (
-$columnId INTEGER PRIMARY KEY,
-$columnName TEXT NOT NULL,
-$columnAge INTEGER NOT NULL
-)
-''');
+      CREATE TABLE $table (
+        $columnId INTEGER PRIMARY KEY,
+        $columnDate TEXT NOT NULL UNIQUE,
+        $columnMood INTEGER NOT NULL,
+        $columnJournal TEXT
+      )
+    ''');
   }
 
-// Helper methods
-// Inserts a row in the database where each key in the
-//Map is a column name
-// and the value is the column value. The return value
-//is the id of the
-// inserted row.
-  Future<int> insert(Map<String, dynamic> row) async {
-    return await _db.insert(table, row);
-  }
-
-// All of the rows are returned as a list of maps, where each map is
-// a key-value list of columns.
-  Future<List<Map<String, dynamic>>> queryAllRows() async {
-    return await _db.query(table);
-  }
-
-// All of the methods (insert, query, update, delete) can also be done using
-// raw SQL commands. This method uses a raw query to give the row count.
-  Future<int> queryRowCount() async {
-    final results = await _db.rawQuery('SELECT COUNT(*) FROM $table');
-    return Sqflite.firstIntValue(results) ?? 0;
-  }
-
-// We are assuming here that the id column in the map is set. The other
-// column values will be used to update the row.
-  Future<int> update(Map<String, dynamic> row) async {
-    int id = row[columnId];
-    return await _db.update(
+  Future<int> insertEntry(String date, int mood, String journal) async {
+    final db = await database;
+    return await db.insert(
       table,
-      row,
-      where: '$columnId = ?',
-      whereArgs: [id],
+      {
+        columnDate: date,
+        columnMood: mood,
+        columnJournal: journal,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace, // overwrite same-day entry
     );
   }
 
-// Deletes the row specified by the id. The number of affected rows is
-// returned. This should be 1 as long as the row exists.
-  Future<int> delete(int id) async {
-    return await _db.delete(
+  Future<Map<String, dynamic>?> getEntryByDate(String date) async {
+    final db = await database;
+    final result = await db.query(
       table,
-      where: '$columnId = ?',
-      whereArgs: [id],
+      where: '$columnDate = ?',
+      whereArgs: [date],
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<Map<String, dynamic>>> getAllEntries() async {
+    final db = await database;
+    return await db.query(table);
+  }
+
+  Future<int> deleteEntry(String date) async {
+    final db = await database;
+    return await db.delete(
+      table,
+      where: '$columnDate = ?',
+      whereArgs: [date],
     );
   }
 }
