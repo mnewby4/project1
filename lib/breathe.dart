@@ -6,7 +6,6 @@ final AudioPlayer audioPlayer = AudioPlayer()..setAsset("assets/audio/background
 
 class _HeartAnimation extends StatefulWidget {
   const _HeartAnimation();
-
   @override
   State<_HeartAnimation> createState() => _HeartAnimationState();
 }
@@ -20,9 +19,6 @@ class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProvi
   @override
   void initState() {
     super.initState();
-
-    /*FlameAudio.bgm.initialize();
-    FlameAudio.bgm.play("backgroundaudio.mp3", volume: 1.0);*/
     audioPlayer.play();
 
     motionController = AnimationController(
@@ -60,7 +56,6 @@ class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProvi
   
   @override
   void dispose() {
-    //FlameAudio.bgm.stop();
     audioPlayer.dispose();
     motionController.dispose();
     super.dispose();
@@ -70,7 +65,7 @@ class _HeartAnimationState extends State<_HeartAnimation> with SingleTickerProvi
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container (
+        child: Container(
           child: Stack(children: <Widget>[
             Center(
               child: new Container(
@@ -101,10 +96,8 @@ class _MuteButtonState extends State<_MuteButton> {
       onPressed: () {
         setState(() {
           if (isSongMuted == true) {
-            //FlameAudio.bgm.play("backgroundaudio.mp3", volume: 1.0);
             audioPlayer.play();
           } else {
-            //FlameAudio.bgm.stop();
             audioPlayer.setVolume(0.0);
           }
           isSongMuted = !isSongMuted;
@@ -116,6 +109,7 @@ class _MuteButtonState extends State<_MuteButton> {
     );
   }
 }
+
 class BreathePage extends StatelessWidget {
   const BreathePage({super.key});
 
@@ -170,11 +164,9 @@ class BreathePage extends StatelessWidget {
             SizedBox(height: 20),
 
             /* Instructions Box */
-            AnimatedContainer(
+            Container(
               height: 200, 
               width: 380, 
-              curve: Curves.easeInOut, 
-              duration: Duration(seconds: 4),
               decoration: BoxDecoration(
                 color: const Color.fromRGBO(159, 236, 149, 1),
                 boxShadow: [

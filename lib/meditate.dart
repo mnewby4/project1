@@ -153,7 +153,7 @@ class _AudioPlayerState extends State<_AudioPlayerWidget> {
                   barHeight: 8, 
                   baseBarColor: Color.fromRGBO(22, 103, 135, 1), 
                   bufferedBarColor: Colors.grey,
-                  progressBarColor: Color.fromRGBO(255, 241, 205, 1,),
+                  progressBarColor: Color.fromRGBO(255, 233, 205, 1,),
                   thumbColor: Colors.white, 
                   timeLabelTextStyle: const TextStyle(
                     color: Colors.white, 

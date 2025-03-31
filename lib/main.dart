@@ -6,8 +6,6 @@ void main() {
   runApp(MyApp());
 }
 class MyApp extends StatelessWidget {
-  bool isActivity1On = true;
-
   List<String> quotes = [
     "No flower can grow without a little rain. Let go of control over what you cannot change.",
     "Grow towards your interests, like a plant reaching for the sun.",
@@ -20,7 +18,6 @@ class MyApp extends StatelessWidget {
     "The only person you should compare yourself to is yourself. Aim to be a tiny bit better than who you were yesterday.",
     "Nothing is perfect, yet everything is perfect. Trees can be contorted or bent and they're still beautiful",
   ];
-
   int get todaysQuoteNum {
     int randomNum = Random().nextInt(quotes.length - 1);
     return randomNum;
@@ -31,6 +28,7 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(84, 190, 123, 1)),
+        fontFamily: 'Verdana',
       ),
       home: DefaultTabController(
         length: 2,
