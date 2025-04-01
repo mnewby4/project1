@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
+import 'helper.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView({Key? key}) : super(key: key);
@@ -12,6 +14,96 @@ class _CalendarViewState extends State<CalendarView> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  Map<String, Map<String, dynamic>> _moodEntries = {};
+
+  final dbHelper = DatabaseHelper.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMoodEntries();
+  }
+
+  Future<void> _loadMoodEntries() async {
+    final entries = await dbHelper.getAllEntries();
+    setState(() {
+      _moodEntries = {
+        for (var entry in entries)
+          entry['date']: {
+            'mood': entry['mood'],
+            'journal': entry['journal'],
+          }
+      };
+    });
+  }
+
+  void _showMoodDialog(DateTime date) {
+    int? selectedMood;
+    TextEditingController journalController = TextEditingController();
+    final dateStr = DateFormat('yyyy-MM-dd').format(date);
+    final existingEntry = _moodEntries[dateStr];
+
+    if (existingEntry != null) {
+      selectedMood = existingEntry['mood'];
+      journalController.text = existingEntry['journal'] ?? '';
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Mood Entry for $dateStr"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(5, (index) {
+                  final moods = ['😞', '🙁', '😐', '🙂', '😄'];
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedMood = index;
+                      });
+                      Navigator.pop(context);
+                      _showMoodDialog(date); // reopen to reflect change
+                    },
+                    child: Text(
+                      moods[index],
+                      style: TextStyle(
+                        fontSize: 30,
+                        backgroundColor: selectedMood == index ? Colors.grey[300] : Colors.transparent,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: journalController,
+                decoration: const InputDecoration(
+                  labelText: "Write about your day (optional)",
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                if (selectedMood != null) {
+                  await dbHelper.insertEntry(dateStr, selectedMood!, journalController.text);
+                  await _loadMoodEntries();
+                }
+                Navigator.pop(context);
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +113,6 @@ class _CalendarViewState extends State<CalendarView> {
       ),
       body: Column(
         children: [
-          // Header text matching the proposal outline
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
@@ -41,44 +132,24 @@ class _CalendarViewState extends State<CalendarView> {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                 });
-                // When a day is selected, show a placeholder dialog for mood details.
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(
-                          "Mood Entry for ${selectedDay.toLocal().toString().split(' ')[0]}"),
-                      content: const Text(
-                          "Mood and journal entry details would appear here."),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text("Close"),
-                        )
-                      ],
-                    );
-                  },
-                );
+                _showMoodDialog(selectedDay);
               },
               onFormatChanged: (format) {
                 setState(() {
                   _calendarFormat = format;
                 });
               },
-              // Marker to show mood entry for days (using a simple dummy example)
               calendarBuilders: CalendarBuilders(
                 markerBuilder: (context, day, events) {
-                  // For demonstration, we mark today with a dot.
-                  if (isSameDay(day, DateTime.now())) {
+                  final dateStr = DateFormat('yyyy-MM-dd').format(day);
+                  if (_moodEntries.containsKey(dateStr)) {
+                    final mood = _moodEntries[dateStr]!['mood'];
+                    final emojis = ['😞', '🙁', '😐', '🙂', '😄'];
                     return Positioned(
                       bottom: 1,
-                      child: Container(
-                        width: 7,
-                        height: 7,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.blue,
-                        ),
+                      child: Text(
+                        emojis[mood],
+                        style: const TextStyle(fontSize: 18),
                       ),
                     );
                   }
@@ -87,28 +158,11 @@ class _CalendarViewState extends State<CalendarView> {
               ),
             ),
           ),
-          // Button to add today's mood entry as described in the proposal.
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                // Placeholder for adding today's entry.
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text("Add Today's Entry"),
-                      content: const Text(
-                          "A form to add your mood and journal entry would appear here."),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text("Close"),
-                        )
-                      ],
-                    );
-                  },
-                );
+                _showMoodDialog(DateTime.now());
               },
               child: const Text("Add Today’s Entry"),
             ),
