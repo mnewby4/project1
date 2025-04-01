@@ -6,19 +6,20 @@ import 'package:rxdart/rxdart.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
 class MyPainter extends CustomPainter {
- final double animationValue;
- 
+ final double animationValue; 
  MyPainter(this.animationValue);
 
   @override
   void paint(Canvas canvas, Size size) {
     for (int i = 3; i >= 0; i--) {
-      circle(canvas, Rect.fromLTRB(0, 0, size.width, size.height), i + animationValue);
+      circle(canvas, Rect.fromLTRB(0, 0, size.width, size.height), 
+      i + animationValue);
     }
   }
   void circle(Canvas canvas, Rect rect, double value) {
     Paint paint = Paint()
-      ..color = const Color.fromRGBO(84, 190, 123, 1).withValues(alpha: 1 - (value / 4).clamp(0, 1));
+      ..color = const Color.fromRGBO(84, 190, 123, 1)
+      .withValues(alpha: 1 - (value / 4).clamp(0, 1));
 
     canvas.drawCircle(rect.center, 
           sqrt((rect.width * .5 * rect.width * .5) * value / 4), paint);
@@ -116,8 +117,6 @@ class _AudioPlayerState extends State<_AudioPlayerWidget> {
   void initState() {
     super.initState(); 
     _audioPlayer = AudioPlayer()..setAsset("assets/audio/guided.mp3");
-
-    
   }
 
   @override
