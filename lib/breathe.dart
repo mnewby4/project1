@@ -97,6 +97,7 @@ class _MuteButtonState extends State<_MuteButton> {
         setState(() {
           if (isSongMuted == true) {
             audioPlayer.play();
+            audioPlayer.setVolume(0.5);
           } else {
             audioPlayer.setVolume(0.0);
           }

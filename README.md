@@ -14,3 +14,13 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+## Instructions
+
+cd project1
+flutter run 
+ 
+Any issues with the activities screen may be fixed by a hard reset ("R" in the terminal) or adjusting the volume of the emulator. If not, a hard memory wipe of the emulator device may be necessary 
+
+YouTube link: https://www.youtube.com/watch?v=99dh4FyO4hI
