@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'breathe.dart';
+import 'meditate.dart';
 import 'theme.dart';
-import 'dart:math';
 
 class ActivityView extends StatelessWidget{
   const ActivityView({super.key, required this.quote});
@@ -28,9 +28,6 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPage extends State<ActivityPage> {
-  void navigateBreath() {
-    print("breathing button pressed");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +67,7 @@ class _ActivityPage extends State<ActivityPage> {
               height: 200, 
               width: 380, 
               decoration: BoxDecoration(
-                color: const Color.fromRGBO(255, 241, 205, 1),
+                color: const Color.fromRGBO(255, 233, 205, 1),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey, 
@@ -132,7 +129,9 @@ class _ActivityPage extends State<ActivityPage> {
               height: 150,
               width: 380,
               child: ElevatedButton(
-                onPressed: navigateBreath,
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MeditatePage()));
+                },
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll<Color>(Color.fromRGBO(135, 202, 229, 1)),
                 ),
